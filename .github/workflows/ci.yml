@@ -1,5 +1,4 @@
-name: CI/CD - Housing
-
+name: CI/CD - Customer
 on:
   push:
     branches: ["main"]
