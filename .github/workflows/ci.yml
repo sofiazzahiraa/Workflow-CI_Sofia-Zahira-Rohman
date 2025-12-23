@@ -1,4 +1,4 @@
-name: CI/CD - Customer
+name: CI/CD - Customer Churn
 on:
   push:
     branches: ["main"]
