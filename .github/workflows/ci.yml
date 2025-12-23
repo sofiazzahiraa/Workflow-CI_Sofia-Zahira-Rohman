@@ -27,4 +27,4 @@ jobs:
       - name: Train Logistic Regression (MLflow)
         shell: bash -l {0}
         run: |
-          python Membangun_model/train.py
+          python Membangun_model/modelling.py
