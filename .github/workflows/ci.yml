@@ -1,71 +1,30 @@
-name: CI/CD - Customer Churn
+name: CI/CD - Telco Churn MLflow
+
 on:
   push:
-    branches: ["main"]
-  workflow_dispatch:
+    branches: [ main ]
+  pull_request:
 
 jobs:
-  train-and-docker:
+  train-model:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v4
-      with:
-        python-version: "3.12"
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10"
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel
-        pip install -r requirements.txt
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          pip install -r requirements.txt
 
-    # ===== TRAIN MODEL =====
-    - name: Train model
-      id: train_script
-      run: |
-        cd MLProject
-        python modelling.py
-
-    # ===== GET RUN ID (AMAN) =====
-    - name: Get MLflow Run ID
-      run: |
-        echo "RUN_ID=${{ steps.train_script.outputs.RUN_ID }}" >> $GITHUB_ENV
-        # cd MLProject
-        # RUN_ID=$(find mlruns -maxdepth 2 -type d -regex '.*/[0-9a-f]\{32\}' | sort | tail -n 1 | xargs basename)
-        # echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-        # echo "RUN_ID=$RUN_ID"
-
-
-
-
-    # ===== UPLOAD ARTIFACT =====
-    - name: Upload MLflow artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: mlflow-artifacts
-        path: MLProject/mlruns
-
-    # ===== DOCKER =====
-    - name: Login Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Debug MLflow structure
-      run: |
-        cd MLProject
-        tree mlruns || ls -R mlruns
-
-    - name: Build Docker image with MLflow
-      run: |
-        cd MLProject
-        mlflow models build-docker \
-          -m runs:/$RUN_ID/model \
-          -n ${{ secrets.DOCKERHUB_USERNAME }}/housing:latest
-
-    - name: Push Docker image
-      run: |
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/housing:latest
+      - name: Train Logistic Regression (MLflow)
+        shell: bash -l {0}
+        run: |
+          python Membangun_model/train.py
