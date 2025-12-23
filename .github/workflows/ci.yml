@@ -13,18 +13,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 🔑 Setup Miniconda
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          python-version: "3.10"
 
-      - name: Install dependencies
+      # 🚀 Run MLflow Project
+      - name: Run MLflow Project
         shell: bash -l {0}
         run: |
-          pip install -r requirements.txt
-
-      - name: Train Logistic Regression (MLflow)
-        shell: bash -l {0}
-        run: |
-          python Membangun_model/modelling.py
+          cd MLProject
+          mlflow run .
