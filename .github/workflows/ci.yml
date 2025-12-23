@@ -6,21 +6,27 @@ on:
   pull_request:
 
 jobs:
-  train-model:
+  train-and-docker:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 🔑 Setup Miniconda
+      # 🔥 INI KUNCI UTAMA (SAMA PERSIS DENGAN HOUSING)
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
 
+      # 🔥 WAJIB ADA (INI YANG TADI HILANG)
+      - name: Install MLflow
+        shell: bash -l {0}
+        run: |
+          pip install mlflow
+
       # 🚀 Run MLflow Project
-      - name: Run MLflow Project
+      - name: Run MLflow Project (Telco Churn)
         shell: bash -l {0}
         run: |
           cd MLProject
